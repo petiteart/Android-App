@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Real</string>
+    <string name="click_action_text">click me</string>
+    <string name="greetng_text">Pawita es guapa!</string>
 </resources>
