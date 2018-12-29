@@ -9,9 +9,12 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,9 +22,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button initialClick = null;
+    Button addClick = null;
     TextView fillText = null;
-    ImageView selectedPictureView = null;
     Bitmap currentBitmap = null;
+    LinearLayout galleryLayout = null;
 
     int count = 1;
     private final int PICK_IMAGE = 1;
@@ -32,11 +36,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // 1) find button by id in xml and set an onclicklistener
         initialClick = findViewById(R.id.button);
+        addClick = findViewById(R.id.addButton);
         // 2) add a handler method for when the button is clicked
         initialClick.setOnClickListener((View view) -> onClick(view));
+        addClick.setOnClickListener((View view) -> onClick(view));
         fillText = findViewById(R.id.textview);
         // 3) Look up how you can select an image file to open on screen.
-        selectedPictureView = findViewById(R.id.selectedPictureView);
+            //selectedPictureView = findViewById(R.id.selectedPictureView);
+
+            // 3) Look up how you can select an image file to open on screen.
+        //selectedPictureView = findViewById(R.id.selectedPictureView);
+        //selectedPictureView.setImageResource(R.drawable.ic_launcher_background);
+
+        galleryLayout = findViewById(R.id.gallery);
 
     }
     private void onClick(View v){
@@ -67,7 +79,12 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            selectedPictureView.setImageURI(pictureUri);
+            ImageView imageView = new ImageView(getApplicationContext());
+            imageView.setImageURI(pictureUri);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            imageView.setLayoutParams(lp);
+
+            galleryLayout.addView(imageView);
             //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
             try {
                 this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
@@ -80,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             fillText.setBackgroundColor(averageColour);
         }
     }
+
     private int calculateAverageColour(){
         int countX = currentBitmap.getWidth();
         int countY = currentBitmap.getHeight();

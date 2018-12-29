@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:layout_gravity="top"
 
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -26,10 +27,27 @@
         tools:layout_editor_absoluteY="217dp"
         />
 
-    <ImageView
-        android:id="@+id/selectedPictureView"
+    <Button
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         />
+        android:layout_gravity="center"
+        android:text="@string/add_action_text"
+        tools:layout_editor_absoluteX="148dp"
+        tools:layout_editor_absoluteY="217dp"
+        />
+
+    <HorizontalScrollView
+        android:id="@+id/galleryLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/gallery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
 
 </LinearLayout>
