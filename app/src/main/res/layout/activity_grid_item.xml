@@ -4,7 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context="com.example.larntech.gridview.GridItemActivity">
+tools:context="com.example.pawita.real.GridItemActivity">
 
 <TextView
     android:id="@+id/griddata"
@@ -12,6 +12,7 @@ tools:context="com.example.larntech.gridview.GridItemActivity">
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_marginTop="105dp"
+    android:text="Apple"
     android:textColor="#000"
     android:textSize="10dp" />
 
