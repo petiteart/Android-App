@@ -12,20 +12,13 @@
 
     <TextView
         android:id="@+id/textview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:text="@string/greetng_text" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/click_action_text"
-        tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="217dp"
-        />
 
     <Button
         android:id="@+id/addButton"
@@ -34,20 +27,42 @@
         android:layout_gravity="center"
         android:text="@string/add_action_text"
         tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="217dp"
-        />
+        tools:layout_editor_absoluteY="217dp" />
 
-    <HorizontalScrollView
-        android:id="@+id/galleryLayout"
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/click_action_text"
+        tools:layout_editor_absoluteX="148dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:id="@+id/gallery"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
+        tools:context="com.example.larntech.gridview.GridItemActivity">
 
+        <TextView
+            android:id="@+id/griddata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="105dp"
+            android:textColor="#000"
+            android:textSize="30dp" />
+
+        <ImageView
+            android:id="@+id/gallery"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/griddata"
+            android:layout_marginTop="27dp" />
+    </RelativeLayout>
 
 </LinearLayout>
