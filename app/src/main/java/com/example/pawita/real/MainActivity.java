@@ -2,31 +2,21 @@ package com.example.pawita.real;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.view.ViewGroup;
-import android.database.Cursor;
-import android.provider.OpenableColumns;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         addClick = findViewById(R.id.addButton);
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
+
+        // averagecolour does not exist anymore
         gridText = findViewById(R.id.averagecolour);
 
         gridView = findViewById(R.id.gridview);
@@ -65,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void onClick(View v){
-        updateText();
+        /*
+         * THIS IS NOW OBSELETE, gridText does no longer exist - updateText();
+         */
         choosePicture();
     }
 
@@ -76,11 +70,11 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
-
+    @Deprecated //deprecation method as updatetext refers to gridtext which no longer exists
     private void updateText() {
         String countText = "you have "+count;
         if(count == 1){
-            gridText.setText(countText + " time.");
+           gridText.setText(countText + " time.");
         }
         else {
             gridText.setText(countText + " times.");
@@ -103,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 // get Bitmap orientation
                 ExifInterface exif = null;
                 try {
+                    // this is throwing an exception, it's expecting a filename but instead receives log tag, consider use of this ExifInterface
+                    // DO YOU NEED AN EXIF TAG?
                     exif = new ExifInterface(LOG_TAG);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -113,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             int averageColour = calculateAverageColour();
-            gridText.setBackgroundColor(averageColour);
+  //          gridText.setBackgroundColor(averageColour);
         }
     }
 
