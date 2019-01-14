@@ -35,7 +35,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
     Bitmap currentBitmap = null;
-    ImageView galleryImage = null;
     TextView gridText = null;
     GridView gridView = null;
 
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         addClick = findViewById(R.id.addButton);
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
-        galleryImage = findViewById(R.id.image);
         gridText = findViewById(R.id.averagecolour);
 
         gridView = findViewById(R.id.gridview);
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void choosePicture() {
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
@@ -97,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            galleryImage.setImageURI(pictureUri);
+            //galleryImage.setImageURI(pictureUri);
 
             //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
             try {
@@ -166,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             //getting view in row_data
             TextView name = view1.findViewById(R.id.averagecolour);
             ImageView image = view1.findViewById(R.id.image);
+            //image.setImageURI(pictureUri);
             return view1;
         }
     }
