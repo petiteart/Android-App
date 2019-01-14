@@ -13,6 +13,7 @@ public class GridItemActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Mike first commit
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_item);
 
