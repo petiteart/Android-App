@@ -2,25 +2,31 @@ package com.example.pawita.real;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.view.ViewGroup;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
-    ArrayList<Uri> imageUri = new ArrayList<Uri>();
 
     int count = 1;
     private final int PICK_IMAGE = 1;
@@ -44,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         addClick = findViewById(R.id.addButton);
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
-
-        // averagecolour does not exist anymore
         gridText = findViewById(R.id.averagecolour);
 
         gridView = findViewById(R.id.gridview);
@@ -56,16 +59,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
-                intent.putExtra("image", imageUri.get(i));
                 startActivity(intent);
             }
         });
 
     }
     private void onClick(View v){
-        /*
-         * THIS IS NOW OBSELETE, gridText does no longer exist - updateText();
-         */
+        updateText();
         choosePicture();
     }
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
-    @Deprecated //deprecation method as updatetext refers to gridtext which no longer exists
+
     private void updateText() {
         String countText = "you have "+count;
         if(count == 1){
@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            imageUri.add(pictureUri);
             //galleryImage.setImageURI(pictureUri);
 
             //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
@@ -104,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 // get Bitmap orientation
                 ExifInterface exif = null;
                 try {
-                    // this is throwing an exception, it's expecting a filename but instead receives log tag, consider use of this ExifInterface
-                    // DO YOU NEED AN EXIF TAG?
                     exif = new ExifInterface(LOG_TAG);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             int averageColour = calculateAverageColour();
-            //          gridText.setBackgroundColor(averageColour);
+            gridText.setBackgroundColor(averageColour);
         }
     }
 
@@ -148,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return imageUri.size();
+            return PICK_IMAGE;
         }
 
         @Override
@@ -164,9 +161,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
+            //getting view in row_data
             TextView name = view1.findViewById(R.id.averagecolour);
             ImageView image = view1.findViewById(R.id.image);
-            image.setImageURI(imageUri.get(i));
+            //image.setImageURI(pictureUri);
             return view1;
         }
     }
