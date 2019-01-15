@@ -13,13 +13,14 @@ public class GridItemActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Mike first commit
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_item);
 
         gridData = findViewById(R.id.griddata);
         imageView = findViewById(R.id.imageView);
         Intent intent = getIntent();
-        String receivedName =  intent.getStringExtra("name");
+        String receivedName =  intent.getStringExtra("averagecolour");
         int receivedImage = intent.getIntExtra("image",0);
 
         gridData.setText(receivedName);
