@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
+    ArrayList<Uri> imageUri = new ArrayList<Uri>();
 
     int count = 1;
     private final int PICK_IMAGE = 1;
@@ -59,13 +60,14 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
+                intent.putExtra("image", imageUri.get(i));
                 startActivity(intent);
             }
         });
 
     }
     private void onClick(View v){
-        updateText();
+
         choosePicture();
     }
 
@@ -76,19 +78,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
-
-    private void updateText() {
-        String countText = "you have "+count;
-        if(count == 1){
-            gridText.setText(countText + " time.");
-        }
-        else {
-            gridText.setText(countText + " times.");
-        }
-        count = count+1;
-
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -145,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return PICK_IMAGE;
+            return imageUri.size();
         }
 
         @Override
@@ -164,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
             //getting view in row_data
             TextView name = view1.findViewById(R.id.averagecolour);
             ImageView image = view1.findViewById(R.id.image);
+            image.setImageURI(imageUri.get(i));
             //image.setImageURI(pictureUri);
             return view1;
         }
