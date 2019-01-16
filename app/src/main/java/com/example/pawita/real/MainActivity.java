@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // 1) find button by id in xml and set an onclicklistener
         addClick = findViewById(R.id.addButton);
+        gridText = findViewById(R.id.averagecolour);
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
-        gridText = findViewById(R.id.averagecolour);
 
         gridView = findViewById(R.id.gridview);
         CustomAdapter customAdapter = new CustomAdapter();
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
             //getting view in row_data
-            TextView name = view1.findViewById(R.id.averagecolour);
+            //TextView name = view1.findViewById(R.id.averagecolour);
             ImageView image = view1.findViewById(R.id.image);
             image.setImageURI(imageUri.get(i));
             //image.setImageURI(pictureUri);
