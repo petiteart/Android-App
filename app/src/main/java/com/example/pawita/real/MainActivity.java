@@ -2,33 +2,20 @@ package com.example.pawita.real;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.view.ViewGroup;
-import android.database.Cursor;
-import android.provider.OpenableColumns;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
-    ArrayList<Uri> imageUri = new ArrayList<Uri>();
+    CustomAdapter customAdapter = null;
 
     int count = 1;
     private final int PICK_IMAGE = 1;
@@ -53,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
         addClick.setOnClickListener((View view) -> onClick(view));
 
         gridView = findViewById(R.id.gridview);
-        CustomAdapter customAdapter = new CustomAdapter();
+        customAdapter = new CustomAdapter();
         gridView.setAdapter(customAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
-                intent.putExtra("image", imageUri.get(i));
+                //intent.putExtra("image", c.get(i));
                 startActivity(intent);
             }
         });
@@ -84,25 +71,8 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            //galleryImage.setImageURI(pictureUri);
-
-            //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
-            try {
-                this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
-                // get Bitmap orientation
-                ExifInterface exif = null;
-                try {
-                    exif = new ExifInterface(LOG_TAG);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            catch (Exception e) {
-                //handle exception
-            }
-
-            int averageColour = calculateAverageColour();
-            gridText.setBackgroundColor(averageColour);
+            customAdapter.images.add(pictureUri);
+            customAdapter.notifyDataSetChanged();
         }
     }
 
@@ -132,14 +102,15 @@ public class MainActivity extends AppCompatActivity {
 
     private class CustomAdapter extends BaseAdapter {
 
+        List<Uri> images = new ArrayList<>();
         @Override
         public int getCount() {
-            return imageUri.size();
+            return images.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return null;
+            return images.get(i);
         }
 
         @Override
@@ -153,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             //getting view in row_data
             //TextView name = view1.findViewById(R.id.averagecolour);
             ImageView image = view1.findViewById(R.id.image);
-            image.setImageURI(imageUri.get(i));
+            image.setImageURI(images.get(i));
             //image.setImageURI(pictureUri);
             return view1;
         }
