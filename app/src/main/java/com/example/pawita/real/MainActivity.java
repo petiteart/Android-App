@@ -81,18 +81,18 @@ public class MainActivity extends AppCompatActivity {
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
             customAdapter.images.add(pictureUri);
-            customAdapter.notifyDataSetChanged();
-            //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
             try {
                 this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
             }
             catch (Exception e) {
                 //handle exception
             }
+            customAdapter.averageColours.add(calculateAverageColour(this.currentBitmap));
+            customAdapter.notifyDataSetChanged();
         }
     }
 
-    private int calculateAverageColour(){
+    private int calculateAverageColour(Bitmap currentBitmap){
         int countX = currentBitmap.getWidth();
         int countY = currentBitmap.getHeight();
         List<Integer> redValueArray = new ArrayList<>();
@@ -145,12 +145,11 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView image = view1.findViewById(R.id.image);
             image.setImageURI(images.get(i));
-
             TextView fillText = view1.findViewById(R.id.averagecolour);
-            int averageColour = calculateAverageColour();
-            averageColours.add(averageColour);
-            fillText.setBackgroundColor(averageColours.get(averageColours.size()-1));
-
+            fillText.setBackgroundColor(averageColours.get(i));
+            //int averageColour = calculateAverageColour();
+            //averageColours.add(averageColour);
+            //fillText.setBackgroundColor(averageColours.get(averageColours.size()-1));
 
             return view1;
         }
