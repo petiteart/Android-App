@@ -3,6 +3,7 @@ package com.example.pawita.real;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "Uri: " + pictureUri );
             customAdapter.images.add(pictureUri);
             customAdapter.notifyDataSetChanged();
-
             //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
             try {
                 this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e) {
                 //handle exception
             }
-
         }
     }
 
@@ -126,9 +126,7 @@ public class MainActivity extends AppCompatActivity {
         List<Integer> averageColours = new ArrayList<>();
          @Override
         public int getCount() {
-
-            return images.size();
-
+             return images.size();
         }
 
         @Override
@@ -141,8 +139,6 @@ public class MainActivity extends AppCompatActivity {
             return 0;
         }
 
-
-
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
@@ -153,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
             TextView fillText = view1.findViewById(R.id.averagecolour);
             int averageColour = calculateAverageColour();
             averageColours.add(averageColour);
-            fillText.setBackgroundColor(averageColours.get(i));
+            fillText.setBackgroundColor(averageColours.get(averageColours.size()-1));
+
 
             return view1;
         }
