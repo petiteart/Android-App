@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
@@ -26,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView = null;
     CustomAdapter customAdapter = null;
 
-    int count = 1;
+
     private final int PICK_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
     @Override
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
@@ -73,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "Uri: " + pictureUri );
             customAdapter.images.add(pictureUri);
             customAdapter.notifyDataSetChanged();
+
+            //currentBitmap = BitmapFactory.decodeFile(pictureUri.);
+            try {
+                this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
+            }
+            catch (Exception e) {
+                //handle exception
+            }
+
         }
     }
 
@@ -100,12 +116,19 @@ public class MainActivity extends AppCompatActivity {
         return (int) averageColour;
     }
 
+    public static  <T, U>  Object[] combine(T[] first, U[] second){
+        return Stream.concat(Arrays.stream(first), Arrays.stream(second)).toArray();
+    }
+
     private class CustomAdapter extends BaseAdapter {
 
         List<Uri> images = new ArrayList<>();
-        @Override
+        List<Integer> averageColours = new ArrayList<>();
+         @Override
         public int getCount() {
+
             return images.size();
+
         }
 
         @Override
@@ -118,14 +141,20 @@ public class MainActivity extends AppCompatActivity {
             return 0;
         }
 
+
+
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
-            //getting view in row_data
-            //TextView name = view1.findViewById(R.id.averagecolour);
+
             ImageView image = view1.findViewById(R.id.image);
             image.setImageURI(images.get(i));
-            //image.setImageURI(pictureUri);
+
+            TextView fillText = view1.findViewById(R.id.averagecolour);
+            int averageColour = calculateAverageColour();
+            averageColours.add(averageColour);
+            fillText.setBackgroundColor(averageColours.get(i));
+
             return view1;
         }
     }
