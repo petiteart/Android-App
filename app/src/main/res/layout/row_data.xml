@@ -17,9 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="Image Row"
             android:textStyle="normal|italic"
-            android:textSize="25sp" />
+            android:textSize="15sp" />
 
         <ImageView
             android:id="@+id/image"

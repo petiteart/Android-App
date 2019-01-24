@@ -1,5 +1,6 @@
 package com.example.pawita.real;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,10 +22,12 @@ public class GridItemActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         Intent intent = getIntent();
         String receivedName =  intent.getStringExtra("averagecolour");
-        int receivedImage = intent.getIntExtra("image",0);
+        Uri receivedImage = Uri.parse(intent.getStringExtra("image"));
+        //int receivedImage = intent.getIntExtra("image",0);
 
         gridData.setText(receivedName);
-        imageView.setImageResource(receivedImage);
+        imageView.setImageURI(null);
+        imageView.setImageURI(receivedImage);
         //enable back Button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

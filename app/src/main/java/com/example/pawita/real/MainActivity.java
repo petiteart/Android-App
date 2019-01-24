@@ -34,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView = null;
     CustomAdapter customAdapter = null;
 
+    //List<Uri> linkImages = new ArrayList<>();
+    //List<Integer> linkColours = new ArrayList<>();
+
+    public List<Uri> images = new ArrayList<>();
+    public List<Integer> averageColours = new ArrayList<>();
+
+    //Integer[] linkImages = null;
+    //String[] linkColours = null;
 
     private final int PICK_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
@@ -55,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
+                intent.putExtra("averagecolour",averageColours.get(i).toString());
+                intent.putExtra("image",images.get(i).toString());
                 //intent.putExtra("image", c.get(i));
                 startActivity(intent);
             }
@@ -80,14 +90,14 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            customAdapter.images.add(pictureUri);
+            images.add(pictureUri);
             try {
                 this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
             }
             catch (Exception e) {
                 //handle exception
             }
-            customAdapter.averageColours.add(calculateAverageColour(this.currentBitmap));
+            averageColours.add(calculateAverageColour(this.currentBitmap));
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -122,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class CustomAdapter extends BaseAdapter {
 
-        List<Uri> images = new ArrayList<>();
-        List<Integer> averageColours = new ArrayList<>();
+
          @Override
         public int getCount() {
              return images.size();
@@ -147,9 +156,10 @@ public class MainActivity extends AppCompatActivity {
             image.setImageURI(images.get(i));
             TextView fillText = view1.findViewById(R.id.averagecolour);
             fillText.setBackgroundColor(averageColours.get(i));
-            //int averageColour = calculateAverageColour();
-            //averageColours.add(averageColour);
-            //fillText.setBackgroundColor(averageColours.get(averageColours.size()-1));
+            fillText.setText(averageColours.get(i).toString());
+
+            //fillText.setText(averageColours.get(i));
+            //image.setImageURI(images.get(i));
 
             return view1;
         }

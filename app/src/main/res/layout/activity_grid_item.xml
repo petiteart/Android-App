@@ -6,21 +6,20 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context="com.example.pawita.real.GridItemActivity">
 
-<TextView
-    android:id="@+id/griddata"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="105dp"
-    android:text="Apple"
-    android:textColor="#000"
-    android:textSize="10dp" />
+    <TextView
+        android:id="@+id/griddata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="105dp"
+        android:textColor="#000"
+        android:textSize="30dp" />
 
-<ImageView
-    android:id="@+id/imageView"
-    android:layout_width="150dp"
-    android:layout_height="150dp"
-    android:layout_centerHorizontal="true"
-    android:layout_below="@+id/griddata"
-    android:layout_marginTop="27dp" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/griddata"
+        android:layout_marginTop="27dp" />
 </RelativeLayout>
