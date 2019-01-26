@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,17 +60,26 @@ public class MainActivity extends AppCompatActivity {
         gridView = findViewById(R.id.gridview);
         customAdapter = new CustomAdapter();
         gridView.setAdapter(customAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
-                intent.putExtra("averagecolour",averageColours.get(i).toString());
+                //intent.putExtra("averagecolour",averageColours.get(i).toString());
+
+                ImageView image = view.findViewById(R.id.image);
+                TextView fillText = view.findViewById(R.id.averagecolour);
+
                 intent.putExtra("image",images.get(i).toString());
-                //intent.putExtra("image", c.get(i));
+                intent.putExtra("fillText", averageColours.get(i).toString());
+                System.out.print(images.get(i).toString());
+                System.out.print(averageColours.get(i).toString());
                 startActivity(intent);
             }
+
         });
+
 
     }
     private void onClick(View v){
@@ -126,13 +137,8 @@ public class MainActivity extends AppCompatActivity {
         return (int) averageColour;
     }
 
-    public static  <T, U>  Object[] combine(T[] first, U[] second){
-        return Stream.concat(Arrays.stream(first), Arrays.stream(second)).toArray();
-    }
 
     private class CustomAdapter extends BaseAdapter {
-
-
          @Override
         public int getCount() {
              return images.size();
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView image = view1.findViewById(R.id.image);
             image.setImageURI(images.get(i));
+
             TextView fillText = view1.findViewById(R.id.averagecolour);
             fillText.setBackgroundColor(averageColours.get(i));
             fillText.setText(averageColours.get(i).toString());

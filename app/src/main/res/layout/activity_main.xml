@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#fff"
     tools:context="MainActivity">
 
     <Button
@@ -13,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="5mm"
         android:text="@string/add_action_text"
         app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
         app:layout_constraintRight_toRightOf="@+id/cstlayout"
@@ -22,7 +24,7 @@
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffff0000"
+        android:background="#fff"
         android:numColumns="2"
         android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
