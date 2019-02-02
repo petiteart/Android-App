@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
+    ColourCalculator colourCalculator = null;
 
     int count = 1;
     private final int PICK_IMAGE = 1;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        colourCalculator = new ColourCalculator();
         setContentView(R.layout.activity_main);
         // 1) find button by id in xml and set an onclicklistener
         addClick = findViewById(R.id.addButton);
@@ -108,34 +110,12 @@ public class MainActivity extends AppCompatActivity {
                 //handle exception
             }
 
-            int averageColour = calculateAverageColour();
+            int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
   //          gridText.setBackgroundColor(averageColour);
         }
     }
 
-    private int calculateAverageColour(){
-        int countX = currentBitmap.getWidth();
-        int countY = currentBitmap.getHeight();
-        List<Integer> redValueArray = new ArrayList<>();
-        List<Integer> greenValueArray = new ArrayList<>();
-        List<Integer> blueValueArray = new ArrayList<>();
-        for (int i = 0; i <  countX; i+=countX/5) {
-            for (int j = 0; j <  countY; j+=countY/5) {
-                int colour = currentBitmap.getPixel(i, j);
-                int red = Color.red(colour);int blue = Color.blue(colour); int green = Color.green(colour); int alpha = Color.alpha(colour);
-                redValueArray.add(red);greenValueArray.add(green); blueValueArray.add(blue);
-            }
-        }
-        int sumRed = 0; int sumGreen = 0; int sumBlue = 0;
-        int countRgb =0;
-        for (int k=0; k< redValueArray.size();k++){
-            sumRed += redValueArray.get(k); sumGreen += greenValueArray.get(k); sumBlue += blueValueArray.get(k);
-            countRgb++;
-        }
-        double averageRed = sumRed/countRgb;double averageGreen = sumGreen/countRgb;double averageBlue = sumBlue/countRgb;
-        double averageColour = Color.rgb((int) averageRed,(int) averageGreen,(int) averageBlue);
-        return (int) averageColour;
-    }
+
 
     private class CustomAdapter extends BaseAdapter {
 
