@@ -14,6 +14,7 @@ public class GridItemActivity extends AppCompatActivity {
 
     TextView gridData;
     ImageView imageView;
+    ColourCalculator colourCalculator = new ColourCalculator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,11 @@ public class GridItemActivity extends AppCompatActivity {
         int receivedColour = Integer.parseInt(receivedName);
         Uri receivedImage = Uri.parse(extras.getString("image"));
 
-        gridData.setText(receivedName);
+
         gridData.setBackgroundColor(receivedColour);
+        String dispColour = colourCalculator.hex2RgbString(receivedColour);
+
+        gridData.setText(dispColour);
         imageView.setImageURI(receivedImage);
 
         //imageView.setImageURI(Uri.parse(receivedImage));

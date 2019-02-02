@@ -3,7 +3,6 @@ package com.example.pawita.real;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,7 +17,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,12 +151,15 @@ public class MainActivity extends AppCompatActivity {
 
             TextView fillText = view1.findViewById(R.id.averagecolour);
             fillText.setBackgroundColor(averageColours.get(i));
-            fillText.setText(averageColours.get(i).toString());
+            String dispColour = colourCalculator.hex2RgbString(averageColours.get(i));
+            //fillText.setText(averageColours.get(i).toString());
 
-            //fillText.setText(averageColours.get(i));
+            fillText.setText(dispColour);
             //image.setImageURI(images.get(i));
 
             return view1;
         }
     }
+
+
 }
