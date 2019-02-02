@@ -28,9 +28,11 @@ public class GridItemActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
 
         String receivedName =  extras.getString("fillText");
+        int receivedColour = Integer.parseInt(receivedName);
         Uri receivedImage = Uri.parse(extras.getString("image"));
 
         gridData.setText(receivedName);
+        gridData.setBackgroundColor(receivedColour);
         imageView.setImageURI(receivedImage);
 
         //imageView.setImageURI(Uri.parse(receivedImage));

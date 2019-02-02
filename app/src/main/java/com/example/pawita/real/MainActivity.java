@@ -3,13 +3,11 @@ package com.example.pawita.real;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,15 +17,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
@@ -36,14 +27,8 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView = null;
     CustomAdapter customAdapter = null;
 
-    //List<Uri> linkImages = new ArrayList<>();
-    //List<Integer> linkColours = new ArrayList<>();
-
     public List<Uri> images = new ArrayList<>();
     public List<Integer> averageColours = new ArrayList<>();
-
-    //Integer[] linkImages = null;
-    //String[] linkColours = null;
 
     private final int PICK_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
@@ -51,16 +36,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // 1) find button by id in xml and set an onclicklistener
+
         addClick = findViewById(R.id.addButton);
         gridText = findViewById(R.id.averagecolour);
+        gridView = findViewById(R.id.gridview);
+
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
 
-        gridView = findViewById(R.id.gridview);
         customAdapter = new CustomAdapter();
         gridView.setAdapter(customAdapter);
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -79,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
 
     }
     private void onClick(View v){
@@ -113,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private int calculateAverageColour(Bitmap currentBitmap){
+    public int calculateAverageColour(Bitmap currentBitmap){
         int countX = currentBitmap.getWidth();
         int countY = currentBitmap.getHeight();
         List<Integer> redValueArray = new ArrayList<>();
@@ -134,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
         double averageRed = sumRed/countRgb;double averageGreen = sumGreen/countRgb;double averageBlue = sumBlue/countRgb;
         double averageColour = Color.rgb((int) averageRed,(int) averageGreen,(int) averageBlue);
-        return (int) averageColour;
+          return (int) averageColour;
     }
 
 
