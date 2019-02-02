@@ -3,6 +3,7 @@ package com.example.pawita.real;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
+    ColourCalculator colourCalculator = null;
     CustomAdapter customAdapter = null;
 
     public List<Uri> images = new ArrayList<>();
@@ -35,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        colourCalculator = new ColourCalculator();
         setContentView(R.layout.activity_main);
-
+        // 1) find button by id in xml and set an onclicklistener
         addClick = findViewById(R.id.addButton);
         gridText = findViewById(R.id.averagecolour);
         gridView = findViewById(R.id.gridview);
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e) {
                 //handle exception
             }
+            int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
             averageColours.add(calculateAverageColour(this.currentBitmap));
             customAdapter.notifyDataSetChanged();
         }
@@ -123,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private class CustomAdapter extends BaseAdapter {
-         @Override
+
+        @Override
         public int getCount() {
              return images.size();
         }
