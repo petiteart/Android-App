@@ -64,9 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.print(averageColours.get(i).toString());
                 startActivity(intent);
             }
-
         });
-
     }
     private void onClick(View v){
 
