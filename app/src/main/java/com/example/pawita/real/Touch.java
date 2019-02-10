@@ -2,6 +2,7 @@ package com.example.pawita.real;
 
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -28,6 +29,14 @@ public class Touch implements OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ImageView view = (ImageView) v;
+
+        float imageWidth = view.getDrawable().getIntrinsicWidth();
+        float imageHeight = view.getDrawable().getIntrinsicHeight();
+        RectF drawableRect = new RectF(0, 0, imageWidth, imageHeight);
+        RectF viewRect = new RectF(0, 0, view.getWidth(), view.getHeight());
+        Matrix matrix = view.getMatrix();
+        matrix.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+
         // Dump touch event to log
         dumpEvent(event);
 
@@ -66,8 +75,15 @@ public class Touch implements OnTouchListener {
                 break;
         }
 
+
+
         view.setImageMatrix(matrix);
         return true; // indicate event was handled
+
+
+
+
+
     }
 
     /** Show an event in the LogCat view, for debugging */
@@ -110,4 +126,6 @@ public class Touch implements OnTouchListener {
         float y = event.getY(0) + event.getY(1);
         point.set(x / 2, y / 2);
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.example.pawita.real;
 import android.content.Intent;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +43,10 @@ public class GridItemActivity extends AppCompatActivity {
         imageView.setImageURI(receivedImage);
 
         //imageView.setImageURI(Uri.parse(receivedImage));
+        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+
+        //imageView.getImageMatrix().setScale(1,1);
+
         imageView.setOnTouchListener(new Touch());
 
         //enable back Button
@@ -59,6 +65,23 @@ public class GridItemActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        super.onWindowFocusChanged(hasFocus);
+
+        float imageWidth = imageView.getDrawable().getIntrinsicWidth();
+        float imageHeight = imageView.getDrawable().getIntrinsicHeight();
+        RectF drawableRect = new RectF(0, 0, imageWidth, imageHeight);
+        RectF viewRect = new RectF(0, 0, imageView.getWidth(),
+                imageView.getHeight());
+        Matrix matrix = imageView.getMatrix();
+        matrix.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+        imageView.setImageMatrix(matrix);
+        imageView.invalidate();
+
     }
 
 }
