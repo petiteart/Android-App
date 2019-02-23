@@ -3,6 +3,8 @@ package com.example.pawita.real;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +19,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,24 +83,55 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            images.add(pictureUri);
+            Bitmap bitmapToRotate = null;
             try {
-                this.currentBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
+                bitmapToRotate = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
+                InputStream inputStream = this.getContentResolver().openInputStream(pictureUri);
+                ExifInterface exif = new ExifInterface(inputStream);
+                int orientation = getCameraPhotoOrientation(exif);
+                currentBitmap = rotateBitmap(bitmapToRotate, orientation);
+
+                images.add(pictureUri);
+
+                int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
+                averageColours.add(calculateAverageColour(this.currentBitmap));
+
+                customAdapter.notifyDataSetChanged();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            catch (Exception e) {
-                //handle exception
-            }
-            int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
-            averageColours.add(calculateAverageColour(this.currentBitmap));
-            customAdapter.notifyDataSetChanged();
         }
+    }
+    public int getCameraPhotoOrientation(ExifInterface exif){
+        int rotate = 0;
+        try { int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+
+            Log.i("RotateImage", "Exif orientation: " + orientation);
+            Log.i("RotateImage", "Rotate value: " + rotate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rotate;
     }
 
     public int calculateAverageColour(Bitmap currentBitmap){
@@ -119,45 +155,49 @@ public class MainActivity extends AppCompatActivity {
         }
         double averageRed = sumRed/countRgb;double averageGreen = sumGreen/countRgb;double averageBlue = sumBlue/countRgb;
         double averageColour = Color.rgb((int) averageRed,(int) averageGreen,(int) averageBlue);
-          return (int) averageColour;
+        return (int) averageColour;
     }
 
 
-    private class CustomAdapter extends BaseAdapter {
+private class CustomAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-             return images.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return images.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
-
-            ImageView image = view1.findViewById(R.id.image);
-            image.setImageURI(images.get(i));
-
-            TextView fillText = view1.findViewById(R.id.averagecolour);
-            fillText.setBackgroundColor(averageColours.get(i));
-            String dispColour = colourCalculator.hex2RgbString(averageColours.get(i));
-            //fillText.setText(averageColours.get(i).toString());
-
-            fillText.setText(dispColour);
-            //image.setImageURI(images.get(i));
-
-            return view1;
-        }
+    @Override
+    public int getCount() {
+        return images.size();
     }
 
+    @Override
+    public Object getItem(int i) {
+        return images.get(i);
+    }
 
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
+
+        ImageView image = view1.findViewById(R.id.image);
+        image.setImageURI(images.get(i));
+
+        TextView fillText = view1.findViewById(R.id.averagecolour);
+        fillText.setBackgroundColor(averageColours.get(i));
+        String dispColour = colourCalculator.hex2RgbString(averageColours.get(i));
+        //fillText.setText(averageColours.get(i).toString());
+
+        fillText.setText(dispColour);
+        //image.setImageURI(images.get(i));
+
+        return view1;
+    }
+}
+
+    public static Bitmap rotateBitmap(Bitmap source, int angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
 }

@@ -2,7 +2,6 @@ package com.example.pawita.real;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.annotation.IntRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +14,8 @@ public class ColourCalculator {
         List<Integer> redValueArray = new ArrayList<>();
         List<Integer> greenValueArray = new ArrayList<>();
         List<Integer> blueValueArray = new ArrayList<>();
-        for (int i = 0; i <  countX; i+=countX/5) {
-            for (int j = 0; j <  countY; j+=countY/5) {
+        for (int i = 0; i <  countX; i=countX+5) {
+            for (int j = 0; j <  countY; j=countY+5) {
                 int colour = currentBitmap.getPixel(i, j);
                 int red    = Color.red(colour);
                 int blue   = Color.blue(colour);
@@ -42,6 +41,7 @@ public class ColourCalculator {
         System.out.println("sum red " + sumRed);
         System.out.println("sum green " + sumGreen);
         System.out.println("sum blu e" + sumBlue);
+        if(countRgb == 0){return -1;}
         double averageRed = sumRed/countRgb;double averageGreen = sumGreen/countRgb;double averageBlue = sumBlue/countRgb;
         System.out.println("average red" + averageRed);
         System.out.println("average green" + averageGreen);

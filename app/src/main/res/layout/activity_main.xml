@@ -14,8 +14,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5mm"
+        android:layout_marginTop="5dp"
         android:text="@string/add_action_text"
+        app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
+        app:layout_constraintRight_toRightOf="@+id/cstlayout"
+        tools:layout_constraintLeft_creator="1" />
+
+    <Button
+        android:id="@+id/addButtonSort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="@string/sort_action_text"
         app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
         app:layout_constraintRight_toRightOf="@+id/cstlayout"
         tools:layout_constraintLeft_creator="1" />

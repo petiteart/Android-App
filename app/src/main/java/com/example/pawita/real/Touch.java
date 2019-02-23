@@ -97,7 +97,7 @@ public class Touch implements OnTouchListener {
         if (actionCode == MotionEvent.ACTION_POINTER_DOWN
                 || actionCode == MotionEvent.ACTION_POINTER_UP) {
             sb.append("(pid ").append(
-                    action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+                    action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
             sb.append(")");
         }
         sb.append("[");

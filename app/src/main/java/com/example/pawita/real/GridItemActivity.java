@@ -18,7 +18,6 @@ public class GridItemActivity extends AppCompatActivity {
     ColourCalculator colourCalculator = new ColourCalculator();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Mike first commit
@@ -44,8 +43,9 @@ public class GridItemActivity extends AppCompatActivity {
 
         //imageView.setImageURI(Uri.parse(receivedImage));
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
+        ///TO DO-----> Correct Image view orientation
 
-        //imageView.getImageMatrix().setScale(1,1);
+
 
         imageView.setOnTouchListener(new Touch());
 
