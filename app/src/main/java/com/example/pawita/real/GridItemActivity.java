@@ -1,15 +1,17 @@
 package com.example.pawita.real;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import static com.example.pawita.real.MainActivity.rotatePicture;
 
 public class GridItemActivity extends AppCompatActivity {
 
@@ -32,16 +34,19 @@ public class GridItemActivity extends AppCompatActivity {
 
         String receivedName =  extras.getString("fillText");
         int receivedColour = Integer.parseInt(receivedName);
-        Uri receivedImage = Uri.parse(extras.getString("image"));
+        Uri receivedUri = Uri.parse(extras.getString("image"));
+        //Bitmap bitmap = intent.getParcelableExtra("bitmapImage");
+        //Bitmap bitmap = (Bitmap) intent.getParcelableExtra("bitmapImage");
 
 
         gridData.setBackgroundColor(receivedColour);
         String dispColour = colourCalculator.hex2RgbString(receivedColour);
 
         gridData.setText(dispColour);
-        imageView.setImageURI(receivedImage);
+        //imageView.setImageURI(receivedUri);
+        Bitmap bitmap = rotatePicture(receivedUri, this.getContentResolver());
 
-        //imageView.setImageURI(Uri.parse(receivedImage));
+        imageView.setImageBitmap(bitmap);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
         ///TO DO-----> Correct Image view orientation
 

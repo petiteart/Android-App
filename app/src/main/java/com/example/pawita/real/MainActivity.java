@@ -1,13 +1,14 @@
 package com.example.pawita.real;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.media.ExifInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +20,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.provider.MediaStore.Images.Media.getBitmap;
 
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter customAdapter = null;
 
     public List<Uri> images = new ArrayList<>();
+    public List<Bitmap> bitmapImages = new ArrayList<>();
     public List<Integer> averageColours = new ArrayList<>();
 
     private final int PICK_IMAGE = 1;
@@ -88,51 +92,52 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            Bitmap bitmapToRotate = null;
+            images.add(pictureUri);
             try {
-                bitmapToRotate = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver() , pictureUri);
-                InputStream inputStream = this.getContentResolver().openInputStream(pictureUri);
-                ExifInterface exif = new ExifInterface(inputStream);
-                int orientation = getCameraPhotoOrientation(exif);
-                currentBitmap = rotateBitmap(bitmapToRotate, orientation);
-
-                images.add(pictureUri);
-
-                int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
-                averageColours.add(calculateAverageColour(this.currentBitmap));
-
-                customAdapter.notifyDataSetChanged();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                this.currentBitmap = getBitmap(getApplicationContext().getContentResolver() , pictureUri);
             }
-        }
-    }
-    public int getCameraPhotoOrientation(ExifInterface exif){
-        int rotate = 0;
-        try { int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotate = 270;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotate = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotate = 90;
-                    break;
+            catch (Exception e) {
+                Log.e(LOG_TAG,"error onActivityResult" + ExceptionUtils.getFullStackTrace(e));
             }
 
-            Log.i("RotateImage", "Exif orientation: " + orientation);
-            Log.i("RotateImage", "Rotate value: " + rotate);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.i(LOG_TAG, "calling get camera photo orientation");
+            Bitmap rotatedBitmap = rotatePicture(pictureUri, this.getContentResolver());
+            Log.i(LOG_TAG, "finish calling get camera photo orientation");
+            //image.setImageBitmap(rotatedBitmap);
+            bitmapImages.add(rotatedBitmap);
+
+
+            int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
+            averageColours.add(calculateAverageColour(this.currentBitmap));
+            customAdapter.notifyDataSetChanged();
         }
-        return rotate;
     }
+    public static Bitmap rotatePicture(Uri pictureUri, ContentResolver contentResolver){
+        Bitmap myBitmap = null;
+        InputStream inputStream = null;
+        try {
+            inputStream = contentResolver.openInputStream(pictureUri);
+            ExifInterface exif = new ExifInterface(inputStream);
+            myBitmap = MediaStore.Images.Media.getBitmap(contentResolver, pictureUri);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            myBitmap = Bitmap.createBitmap(myBitmap, 0, 0, myBitmap.getWidth(), myBitmap.getHeight(), matrix, true); // rotating bitmap
+        }
+        catch (Exception e) {
+            //Log.e(LOG_TAG,"cannot rotate " + ExceptionUtils.getFullStackTrace(e));
+        }
+        return myBitmap;
+    }
+
 
     public int calculateAverageColour(Bitmap currentBitmap){
         int countX = currentBitmap.getWidth();
@@ -163,12 +168,12 @@ private class CustomAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return images.size();
+        return bitmapImages.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return images.get(i);
+        return bitmapImages.get(i);
     }
 
     @Override
@@ -181,7 +186,8 @@ private class CustomAdapter extends BaseAdapter {
         View view1 = getLayoutInflater().inflate(R.layout.row_data, null);
 
         ImageView image = view1.findViewById(R.id.image);
-        image.setImageURI(images.get(i));
+        //image.setImageURI(images.get(i));
+        image.setImageBitmap(bitmapImages.get(i));
 
         TextView fillText = view1.findViewById(R.id.averagecolour);
         fillText.setBackgroundColor(averageColours.get(i));
@@ -194,10 +200,4 @@ private class CustomAdapter extends BaseAdapter {
         return view1;
     }
 }
-
-    public static Bitmap rotateBitmap(Bitmap source, int angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
 }

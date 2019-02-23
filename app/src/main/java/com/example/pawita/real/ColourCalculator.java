@@ -55,7 +55,7 @@ public class ColourCalculator {
         Integer red = Integer.valueOf(colourHex.substring( 1, 3 ), 16);
         Integer green = Integer.valueOf(colourHex.substring( 3, 5 ), 16);
         Integer blue = Integer.valueOf(colourHex.substring( 5, 7 ), 16);
-        String RGBString = "r:" + red.toString() + " g:" + green.toString() + " b:" + blue.toString();
+        String RGBString = "RGB " + "(" + red.toString() + ", " + green.toString() + ", " + blue.toString() + ")78";
         //Integer RGBInteger = Integer.parseInt(RGBString);
         //Integer[] RGBArray = {red, green, blue};
         return RGBString;
