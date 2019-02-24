@@ -19,7 +19,6 @@ public class GridItemActivity extends AppCompatActivity {
     ImageView imageView;
     ColourCalculator colourCalculator = new ColourCalculator();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Mike first commit

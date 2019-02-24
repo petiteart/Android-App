@@ -24,23 +24,32 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.provider.MediaStore.Images.Media.getBitmap;
 
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
+    Button sortClick = null;
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
     ColourCalculator colourCalculator = null;
     CustomAdapter customAdapter = null;
+    NewCustomAdapter newCustomAdapter = null;
 
     public List<Uri> images = new ArrayList<>();
     public List<Bitmap> bitmapImages = new ArrayList<>();
     public List<Integer> averageColours = new ArrayList<>();
+    public List<Bitmap> sortedBitmapImages = new ArrayList<>();
+    public List<Integer> sortedAverageColours = new ArrayList<>();
+
+    public HashMap<Bitmap,Integer> imageMap = new HashMap<>();
+
 
     private final int PICK_IMAGE = 1;
+    private final int SORT_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,44 +58,54 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // 1) find button by id in xml and set an onclicklistener
         addClick = findViewById(R.id.addButton);
+        sortClick = findViewById(R.id.addButtonSort);
         gridText = findViewById(R.id.averagecolour);
         gridView = findViewById(R.id.gridview);
 
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
+        sortClick.setOnClickListener((View view) -> onSortClick(view));
 
-        customAdapter = new CustomAdapter();
-        gridView.setAdapter(customAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Toast.makeText(getApplicationContext(),fruitNames[i],Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
-                //intent.putExtra("averagecolour",averageColours.get(i).toString());
+                if(view==addClick) {
+                    intent.putExtra("image",images.get(i).toString());
+                        intent.putExtra("fillText", averageColours.get(i).toString());
 
-                ImageView image = view.findViewById(R.id.image);
-                TextView fillText = view.findViewById(R.id.averagecolour);
+                        System.out.print(images.get(i).toString());
+                        System.out.print(averageColours.get(i).toString());
+                        }
+                if(view==sortClick) {
+                       intent.putExtra("image", sortedBitmapImages.get(i).toString());
+                        intent.putExtra("fillText", sortedAverageColours.get(i).toString());
+                }
 
-                intent.putExtra("image",images.get(i).toString());
-                intent.putExtra("fillText", averageColours.get(i).toString());
-                System.out.print(images.get(i).toString());
-                System.out.print(averageColours.get(i).toString());
                 startActivity(intent);
             }
         });
     }
-    private void onClick(View v){
 
-        choosePicture();
-    }
+    private void onClick(View v){ choosePicture(); }
+    private  void onSortClick(View v){ sortPicture(); }
 
     private void choosePicture() {
+        customAdapter = new CustomAdapter();
+        gridView.setAdapter(customAdapter);
         Intent intent = new Intent();
         intent.setType("image/*");
-        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.putExtra("activity","first");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
     }
+
+    private void sortPicture() {
+        newCustomAdapter = new NewCustomAdapter();
+        gridView.setAdapter(newCustomAdapter);
+        newCustomAdapter.notifyDataSetChanged();
+        }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
@@ -94,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "Uri: " + pictureUri );
             images.add(pictureUri);
             try {
-                this.currentBitmap = getBitmap(getApplicationContext().getContentResolver() , pictureUri);
+                this.currentBitmap = getBitmap(getApplicationContext().getContentResolver(), pictureUri);
             }
             catch (Exception e) {
                 Log.e(LOG_TAG,"error onActivityResult" + ExceptionUtils.getFullStackTrace(e));
@@ -107,11 +126,18 @@ public class MainActivity extends AppCompatActivity {
             bitmapImages.add(rotatedBitmap);
 
 
-            int averageColour = colourCalculator.calculateAverageColour(currentBitmap);
-            averageColours.add(calculateAverageColour(this.currentBitmap));
+            int averageColour = calculateAverageColour(this.currentBitmap);
+            averageColours.add(averageColour);
+            //averageColours.add(averageColour);
+
+            imageMap.put(rotatedBitmap, averageColour);
+
             customAdapter.notifyDataSetChanged();
+
+
         }
     }
+
     public static Bitmap rotatePicture(Uri pictureUri, ContentResolver contentResolver){
         Bitmap myBitmap = null;
         InputStream inputStream = null;
@@ -197,7 +223,48 @@ private class CustomAdapter extends BaseAdapter {
         fillText.setText(dispColour);
         //image.setImageURI(images.get(i));
 
+        //imageMap.put(bitmapImages.get(i), averageColours.get(i));
+
         return view1;
     }
 }
+
+private class NewCustomAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return averageColours.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return averageColours.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View view2 = getLayoutInflater().inflate(R.layout.row_data, null);
+            ImageView image = view2.findViewById(R.id.image);
+            TextView fillText = view2.findViewById(R.id.averagecolour);
+
+            MapUtil mapUtil = new MapUtil();
+            // Sort the map
+            HashMap<Bitmap, Integer> sortedImageMap = mapUtil.sortByValue(imageMap);
+            // Split key and value
+            sortedBitmapImages.addAll(sortedImageMap.keySet());
+            sortedAverageColours.addAll(sortedImageMap.values());
+
+            fillText.setBackgroundColor(sortedAverageColours.get(i));
+            String dispColour = colourCalculator.hex2RgbString(sortedAverageColours.get(i));
+            fillText.setText(dispColour);
+
+            image.setImageBitmap(sortedBitmapImages.get(i));
+
+            return view2;
+        }
+    }
 }
