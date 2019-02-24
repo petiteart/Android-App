@@ -14,7 +14,6 @@ import android.widget.TextView;
 import static com.example.pawita.real.MainActivity.rotatePicture;
 
 public class GridItemActivity extends AppCompatActivity {
-
     TextView gridData;
     ImageView imageView;
     ColourCalculator colourCalculator = new ColourCalculator();
@@ -25,19 +24,17 @@ public class GridItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_item);
 
-
         gridData = findViewById(R.id.griddata);
         imageView = findViewById(R.id.gridimage);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
+        //int position = getIntent().getExtras().getInt("imgPos");
+        //imageView.setImageResource(Gallery.imageIDs[position]);
+
         String receivedName =  extras.getString("fillText");
-        int receivedColour = Integer.parseInt(receivedName);
         Uri receivedUri = Uri.parse(extras.getString("image"));
-        //Bitmap bitmap = intent.getParcelableExtra("bitmapImage");
-        //Bitmap bitmap = (Bitmap) intent.getParcelableExtra("bitmapImage");
-
-
+        int receivedColour = Integer.parseInt(receivedName);
         gridData.setBackgroundColor(receivedColour);
         String dispColour = colourCalculator.hex2RgbString(receivedColour);
 
@@ -48,8 +45,6 @@ public class GridItemActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
         ///TO DO-----> Correct Image view orientation
-
-
 
         imageView.setOnTouchListener(new Touch());
 
