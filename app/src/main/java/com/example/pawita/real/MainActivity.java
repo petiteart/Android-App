@@ -26,17 +26,27 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static android.provider.MediaStore.Images.Media.getBitmap;
 
 public class MainActivity extends AppCompatActivity {
     Button addClick = null;
-      Bitmap currentBitmap = null;
+    Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
     ColourCalculator colourCalculator = null;
     CustomAdapter customAdapter = null;
 
+    /*
+     * Have one dataset of type TreeSet https://www.geeksforgeeks.org/treeset-in-java-with-examples/
+     * Sorts images when added.
+     *
+     * NOTE: A set can't have duplicates
+     * https://www.geeksforgeeks.org/java-equals-compareto-equalsignorecase-and-compare/
+     */
+    public TreeSet<Item> items = new TreeSet<>(new AverageColoursComparator());
     public List<Uri> images = new ArrayList<>();
     public List<Uri> displayedImages = new ArrayList<>();
     public List<Bitmap> bitmapImages = new ArrayList<>();
@@ -96,10 +106,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i(LOG_TAG,"hit onActivityResult");
         if(requestCode == PICK_IMAGE & resultCode == RESULT_OK){
-            //Uri pictureUri = data.getData();
             Uri pictureUri = data.getData();
             Log.i(LOG_TAG, "Uri: " + pictureUri );
-            images.add(pictureUri);
+
+            try {
+                currentBitmap = getBitmap(getApplicationContext().getContentResolver(), pictureUri);
+            }
+            catch (Exception e) {
+                Log.e(LOG_TAG,"error onActivityResult" + ExceptionUtils.getFullStackTrace(e));
+            }
+            Log.i(LOG_TAG, "calling get camera photo orientation");
+            Bitmap rotatedBitmap = rotatePicture(pictureUri, getContentResolver());
+            Log.i(LOG_TAG, "finish calling get camera photo orientation");
+            bitmapImages.add(rotatedBitmap);
+
+            int averageColour = calculateAverageColour(currentBitmap);
+
+            items.add( new Item(pictureUri,rotatedBitmap, averageColour));
+
+
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -159,12 +184,13 @@ private class CustomAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return images.size();
+        return items.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return images.get(i);
+
+        return getItemFromIndex(items,i);
     }
 
     @Override
@@ -178,38 +204,54 @@ private class CustomAdapter extends BaseAdapter {
         ImageView imageView = view1.findViewById(R.id.image);
         TextView fillText = view1.findViewById(R.id.averagecolour);
 
-        try {
-            currentBitmap = getBitmap(getApplicationContext().getContentResolver(), images.get(i));
-        }
-        catch (Exception e) {
-            Log.e(LOG_TAG,"error onActivityResult" + ExceptionUtils.getFullStackTrace(e));
-        }
-        Log.i(LOG_TAG, "calling get camera photo orientation");
-        Bitmap rotatedBitmap = rotatePicture(images.get(i), getContentResolver());
-        Log.i(LOG_TAG, "finish calling get camera photo orientation");
-        bitmapImages.add(rotatedBitmap);
-        int averageColour = calculateAverageColour(currentBitmap);
+        Item dispItem = getItemFromIndex(items,i);
+        fillText.setBackgroundColor(dispItem.getItemColour());
+        fillText.setText(colourCalculator.hex2RgbString(dispItem.getItemColour()));
+        imageView.setImageBitmap(dispItem.getItemBitmap());
 
-        // Create Map
-        imageMap.put(images.get(i), averageColour);
-
-        // Sort the map
-        MapUtil mapUtil = new MapUtil();
-        sortedImageMap = mapUtil.sortByValue(imageMap);
-        // Split key and value
-        displayedImages.addAll(sortedImageMap.keySet());
-        averageColours.addAll(sortedImageMap.values());
-
-        //display
-        fillText.setBackgroundColor(averageColours.get(i));
-        String dispColour = colourCalculator.hex2RgbString(averageColours.get(i));
-        fillText.setText(dispColour);
-
-        imageView.setImageURI(displayedImages.get(i));
+//        // Split key and value
+//        displayedImages.addAll(itemMap.keySet());
+//        averageColours.addAll(itemMap.values());
+//
+//        //display
+//        fillText.setBackgroundColor(averageColours.get(i));
+//        String dispColour = colourCalculator.hex2RgbString(averageColours.get(i));
+//        fillText.setText(dispColour);
+//
+//        imageView.setImageURI(displayedImages.get(i));
 
 
         return view1;
     }
 
     }
+
+    private Item getItemFromIndex(Set <Item>set, int index ){
+        int counter = 0;
+        for(Item i : set){
+            if (index == counter){
+                return i;
+            }else{
+                counter++;
+            }
+        }
+        return null;
+    }
+
+    private Integer getIndex(Set <Item>set, Item item){
+        Integer counter = 0;
+        for(Item i : set){
+            if (i == item){
+                return counter;
+            }else{
+                counter++;
+            }
+        }
+        return -1;
+    }
+
 }
+
+
+
+
