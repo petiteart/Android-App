@@ -32,13 +32,14 @@ import java.util.TreeSet;
 import static android.provider.MediaStore.Images.Media.getBitmap;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String URI = "Uri";
+    public static final String COLOUR = "averageColour";
     Button addClick = null;
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
     ColourCalculator colourCalculator = null;
     CustomAdapter customAdapter = null;
-
     /*
      * Have one dataset of type TreeSet https://www.geeksforgeeks.org/treeset-in-java-with-examples/
      * Sorts images when added.
@@ -48,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public TreeSet<Item> items = new TreeSet<>(new AverageColoursComparator());
     public List<Uri> images = new ArrayList<>();
-    public List<Uri> displayedImages = new ArrayList<>();
-    public List<Bitmap> bitmapImages = new ArrayList<>();
     public List<Integer> averageColours = new ArrayList<>();
 
     //public HashMap<Bitmap,Integer> imageMap = new HashMap<>();
     public HashMap<Uri,Integer> imageMap = new HashMap<>();
     public HashMap<Uri,Integer> sortedImageMap = new HashMap<>();
-
 
     private final int PICK_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
@@ -71,36 +69,24 @@ public class MainActivity extends AppCompatActivity {
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
-                //intent.putExtra("imgPos",i);
+        customAdapter = new CustomAdapter();
+        gridView.setAdapter(customAdapter);
 
-                    intent.putExtra("image",displayedImages.get(i).toString());
-                    intent.putExtra("fillText", averageColours.get(i).toString());
+        gridView.setOnItemClickListener(customAdapter);
 
-                startActivity(intent);
-            }
-        });
+
     }
 
     private void onClick(View v){ choosePicture(); }
 
     private void choosePicture() {
-            customAdapter = new CustomAdapter();
-            gridView.setAdapter(customAdapter);
-
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.putExtra("activity","first");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE);
         customAdapter.notifyDataSetChanged();
-
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -118,13 +104,14 @@ public class MainActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "calling get camera photo orientation");
             Bitmap rotatedBitmap = rotatePicture(pictureUri, getContentResolver());
             Log.i(LOG_TAG, "finish calling get camera photo orientation");
-            bitmapImages.add(rotatedBitmap);
+            //bitmapImages.add(rotatedBitmap);
 
-            int averageColour = calculateAverageColour(currentBitmap);
+            Integer averageColour = calculateAverageColour(currentBitmap);
 
             items.add( new Item(pictureUri,rotatedBitmap, averageColour));
-
-
+            //data.putExtra("imageAndFilltext", items.toString());
+            //data.putExtra("image", pictureUri.toString());
+            //data.putExtra("fillText", averageColour.toString());
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -180,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-private class CustomAdapter extends BaseAdapter {
+private class CustomAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
 
     @Override
     public int getCount() {
@@ -209,6 +196,9 @@ private class CustomAdapter extends BaseAdapter {
         fillText.setText(colourCalculator.hex2RgbString(dispItem.getItemColour()));
         imageView.setImageBitmap(dispItem.getItemBitmap());
 
+       // averageColours.add(dispItem.getItemColour());
+       // displayedImages.add(dispItem.getItemUri());
+
 //        // Split key and value
 //        displayedImages.addAll(itemMap.keySet());
 //        averageColours.addAll(itemMap.values());
@@ -219,12 +209,22 @@ private class CustomAdapter extends BaseAdapter {
 //        fillText.setText(dispColour);
 //
 //        imageView.setImageURI(displayedImages.get(i));
-
-
         return view1;
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
+
+            Intent intent = new Intent(getApplicationContext(),GridItemActivity.class);
+            Item item = getItemFromIndex(items,i);
+
+            intent.putExtra(COLOUR,item.getItemColour());
+            intent.putExtra(URI, item.getItemUri().toString());
+
+            startActivity(intent);
+
     }
+}
 
     private Item getItemFromIndex(Set <Item>set, int index ){
         int counter = 0;
@@ -249,9 +249,4 @@ private class CustomAdapter extends BaseAdapter {
         }
         return -1;
     }
-
 }
-
-
-
-

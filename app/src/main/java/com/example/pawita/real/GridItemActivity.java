@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static com.example.pawita.real.MainActivity.COLOUR;
+import static com.example.pawita.real.MainActivity.URI;
 import static com.example.pawita.real.MainActivity.rotatePicture;
 
 public class GridItemActivity extends AppCompatActivity {
@@ -29,12 +31,14 @@ public class GridItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        //int position = getIntent().getExtras().getInt("imgPos");
-        //imageView.setImageResource(Gallery.imageIDs[position]);
+        Integer receivedColour =  extras.getInt(COLOUR);
+        Uri receivedUri = Uri.parse(extras.getString(URI));
 
-        String receivedName =  extras.getString("fillText");
-        Uri receivedUri = Uri.parse(extras.getString("image"));
-        int receivedColour = Integer.parseInt(receivedName);
+        //String receivedString = extras.getString("imageAndFilltext");
+        //String[] splitedString = receivedString.split(" ");
+        //String receivedName = splitedString[0];
+       // Uri receivedUri = Uri.parse(splitedString[1]);
+
         gridData.setBackgroundColor(receivedColour);
         String dispColour = colourCalculator.hex2RgbString(receivedColour);
 

@@ -20,17 +20,6 @@
         app:layout_constraintRight_toRightOf="@+id/cstlayout"
         tools:layout_constraintLeft_creator="1" />
 
-    <Button
-        android:id="@+id/addButtonSort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:text="@string/sort_action_text"
-        app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
-        app:layout_constraintRight_toRightOf="@+id/cstlayout"
-        tools:layout_constraintLeft_creator="1" />
-
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
@@ -40,7 +29,7 @@
         android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="@+id/cstlayout"
         app:layout_constraintTop_toBottomOf="@+id/addButton"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
