@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Real</string>
-    <string name="add_action_text">add</string>
+    <string name="add_action_text">+</string>
     <string name="sort_action_text">sort</string>
 </resources>
