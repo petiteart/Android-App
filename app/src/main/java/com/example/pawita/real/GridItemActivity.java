@@ -53,7 +53,7 @@ public class GridItemActivity extends AppCompatActivity {
         imageView.setOnTouchListener(new Touch());
 
         //enable back Button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

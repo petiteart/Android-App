@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,14 +35,17 @@ import java.util.TreeSet;
 import static android.provider.MediaStore.Images.Media.getBitmap;
 
 public class MainActivity extends AppCompatActivity {
+
     public static final String URI = "Uri";
     public static final String COLOUR = "averageColour";
     Button addClick = null;
+    Button refresh = null;
     Bitmap currentBitmap = null;
     TextView gridText = null;
     GridView gridView = null;
     ColourCalculator colourCalculator = null;
     CustomAdapter customAdapter = null;
+
     /*
      * Have one dataset of type TreeSet https://www.geeksforgeeks.org/treeset-in-java-with-examples/
      * Sorts images when added.
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
      * NOTE: A set can't have duplicates
      * https://www.geeksforgeeks.org/java-equals-compareto-equalsignorecase-and-compare/
      */
+    private Toolbar mTopToolbar;
     public TreeSet<Item> items = new TreeSet<>(new AverageColoursComparator());
     public List<Uri> images = new ArrayList<>();
     public List<Integer> averageColours = new ArrayList<>();
@@ -57,17 +64,48 @@ public class MainActivity extends AppCompatActivity {
 
     private final int PICK_IMAGE = 1;
     private final String LOG_TAG = "MainActivity";
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){// Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_favorite) {
+            //Toast.makeText(MainActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        colourCalculator = new ColourCalculator();
         setContentView(R.layout.activity_main);
+        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //setSupportActionBar(mTopToolbar);
+
+        colourCalculator = new ColourCalculator();
+
         // 1) find button by id in xml and set an onclicklistener
         addClick = findViewById(R.id.addButton);
         gridText = findViewById(R.id.averagecolour);
         gridView = findViewById(R.id.gridview);
+        refresh = findViewById(R.id.refreshButton);
+
         // 2) add a handler method for when the button is clicked
         addClick.setOnClickListener((View view) -> onClick(view));
+        refresh.setOnClickListener((View view) -> onClickRefresh(view));
 
         customAdapter = new CustomAdapter();
         gridView.setAdapter(customAdapter);
@@ -75,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(customAdapter);
 
 
+    }
+
+    protected void onClickRefresh(View view) {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     private void onClick(View v){ choosePicture(); }
